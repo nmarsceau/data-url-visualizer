@@ -1,0 +1,138 @@
+<!-- Test Values:
+
+Text: Hello World!
+HTML: <h1>Hello World!</h1>
+GIF: R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7
+SVG: <svg height='21' viewBox='0 0 21 21' width='21' xmlns='http://www.w3.org/2000/svg'><g fill='none' fill-rule='evenodd' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 2)'><path d='m.5 3.20588235c0-1.29949353 2.5-2.74110534 6-2.70588235s6 1.55344765 6 2.85294118v10.29411762c0 1.2994936-2.5 2.8529412-6 2.8529412s-6-1.7005065-6-3c0-.6412832 0-9.65283449 0-10.29411765z'/><path d='m.5 3.5c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115m-12 5.0176115c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115'/></g></svg>
+
+Full Data URL Examples:
+GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGolfO0o/XBs/fNwfjZ0frl3/zy7////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAkAABAALAAAAAAQABAAAAVVICSOZGlCQAosJ6mu7fiyZeKqNKToQGDsM8hBADgUXoGAiqhSvp5QAnQKGIgUhwFUYLCVDFCrKUE1lBavAViFIDlTImbKC5Gm2hB0SlBCBMQiB0UjIQA7
+
+-->
+
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Data URL Wrangler</title>
+		<link rel="icon" href="data:image/svg+xml;utf8,<svg height='21' viewBox='0 0 21 21' width='21' xmlns='http://www.w3.org/2000/svg'><g fill='none' fill-rule='evenodd' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 2)'><path d='m.5 3.20588235c0-1.29949353 2.5-2.74110534 6-2.70588235s6 1.55344765 6 2.85294118v10.29411762c0 1.2994936-2.5 2.8529412-6 2.8529412s-6-1.7005065-6-3c0-.6412832 0-9.65283449 0-10.29411765z'/><path d='m.5 3.5c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115m-12 5.0176115c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115'/></g></svg>">
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<h1 class="header">Data URL Wrangler</h1>
+		<div class="inputContainer">
+			<label for="dataType">Data Type:</label>
+			<select name="dataType" id="dataType">
+				<option value="">Select One</option>
+				<optgroup label="Text">
+					<option value="text/plain">Text</option>
+				</optgroup>
+				<optgroup label="Image">
+					<option value="image/jpeg">JPEG</option>
+					<option value="image/png">PNG</option>
+					<option value="image/gif">GIF</option>
+					<option value="image/svg+xml">SVG</option>
+				</optgroup>
+				<optgroup label="Document">
+					<option value="text/html">HTML</option>
+					<option value="application/pdf">PDF</option>
+				</optgroup>
+			</select>
+			
+			<label for="base64">Base64?</label>
+			<input type="checkbox" name="base64" id="base64" checked="checked">
+
+			<label for="data">Data:</label>
+			<input type="text" name="data" id="data" autofocus>
+		</div>
+		<div class="outputContainer">
+			<iframe name="iframeOutput" id="iframeOutput" hidden></iframe>
+			<img name="imgOutput" id="imgOutput" src="" alt="" hidden>
+		</div>
+		<script>
+			const inputContainer = document.querySelector(".inputContainer")
+			const dataTypeInput = inputContainer.querySelector("#dataType")
+			const base64Input = inputContainer.querySelector("#base64")
+			const dataInput = inputContainer.querySelector("#data")
+
+			const iframeOutput = document.getElementById("iframeOutput")
+			const imgOutput = document.getElementById("imgOutput")
+
+			function hideAllOutputs() {
+				iframeOutput.hidden = true
+				imgOutput.hidden = true
+			}
+
+			function displayOutput(element, url) {
+				element.src = url
+				element.hidden = false
+			}
+
+			function checkAndParseDataURL() {
+				if (dataInput.value.startsWith("data:")) {
+					const matches = dataInput.value.match(/data:(.*),(.*)/)
+					if (matches === null || matches.length < 3) {
+						console.error("Invalid data URL format")
+						return
+					}
+
+					const metaData = matches[1]
+					const data = matches[2]
+					const isBase64 = metaData.includes(";base64")
+
+					const mimeType = metaData.split(";")[0]
+					if (dataTypeInput.querySelector(`option[value="${mimeType}"]`) === null) {
+						console.error(`Invalid data type: '${mimeType}'`)
+						return
+					}
+
+					dataTypeInput.value = mimeType
+					base64Input.checked = isBase64
+					dataInput.value = data
+				}
+			}
+
+			function updateOutput() {
+				const dataType = dataTypeInput.value
+				const base64 = base64Input.checked
+				const data = dataInput.value
+
+				const dataURL = `data:${dataType}${base64 ? ";base64" : ""},${data}`
+				
+				hideAllOutputs()
+				switch (dataType) {
+					case "image/jpeg":
+					case "image/png":
+					case "image/gif":
+					case "image/svg+xml":
+						displayOutput(imgOutput, dataURL)									
+						break;
+					case "text/plain":
+					case "text/html":
+					case "application/pdf":
+						displayOutput(iframeOutput, dataURL)
+						break;
+					default:
+						console.error(`Unsupported data type: '${dataType}'`)
+						break;
+				}
+			}
+
+			let timeout
+			inputContainer.addEventListener("input", (event) => {
+				clearTimeout(timeout)
+				timeout = setTimeout(() => {
+					checkAndParseDataURL()
+					updateOutput()
+				}, 300)
+			})
+		</script>
+	</body>
+</html>
