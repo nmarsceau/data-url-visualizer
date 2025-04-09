@@ -36,12 +36,14 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			}
 
 			.outputContainer {
-				max-width: 50em;
-				margin: 0 auto;
-
 				width: calc(100vw - 2em);
 				margin: 1em;
 				text-align: center;
+
+				@media screen and (min-width: 45em) {
+					max-width: 40em;
+					margin: 0 auto;
+				}
 
 				#iframeOutput {
 					width: 100%;
