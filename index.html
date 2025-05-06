@@ -19,6 +19,10 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 		<title>Data URL Visualizer</title>
 		<link rel="icon" href="data:image/svg+xml;utf8,<svg height='21' viewBox='0 0 21 21' width='21' xmlns='http://www.w3.org/2000/svg'><g fill='none' fill-rule='evenodd' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 2)'><path d='m.5 3.20588235c0-1.29949353 2.5-2.74110534 6-2.70588235s6 1.55344765 6 2.85294118v10.29411762c0 1.2994936-2.5 2.8529412-6 2.8529412s-6-1.7005065-6-3c0-.6412832 0-9.65283449 0-10.29411765z'/><path d='m.5 3.5c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115m-12 5.0176115c0 1.38071187 2 3 6 3s6-1.63689962 6-3.0176115'/></g></svg>">
 		<style>
+			:root {
+				--accentColor: #0c463e;
+			}
+
 			html, body {
 				margin: 0;
 				padding: 0;
@@ -27,12 +31,102 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 
 			.header {
 				text-align: center;
+				color: var(--accentColor);
+				margin-block: 0.3em;
 			}
 
 			.inputContainer {
-				display: flex;
-				justify-content: center;
-				gap: 1em;
+				width: calc(100vw - 2em);
+				margin: 1em;
+				text-align: center;
+
+				display: grid;
+				grid-template-columns: max-content 1fr max-content;
+				grid-template-rows: min-content min-content;
+				grid-template-areas:
+					"dataType . base64"
+					"data data data"
+				;
+				box-sizing: border-box;
+				
+				border: 3px solid var(--accentColor);
+				border-radius: 0.5em;
+
+				@media screen and (min-width: 35em) {
+					grid-template-columns: max-content max-content 1fr;
+					grid-template-rows: min-content;
+					grid-template-areas:
+						"dataType base64 data"
+					;
+				}
+
+				@media screen and (min-width: 45em) {
+					max-width: 40em;
+					margin: 1em auto;
+				}
+			}
+
+			.input:has(#dataType) {
+				grid-area: dataType;
+
+				@media screen and (min-width: 35em) {
+					padding-inline-end: 0.4em;
+				}
+			}
+
+			#dataType {
+				height: 30px;
+				width: 100%;
+				padding-inline: 0.3em;
+				font-size: 1.1em;
+				border: 0;
+				outline: 0;
+				border-radius: 0.5em;
+			}
+
+			.input:has(#base64) {
+				grid-area: base64;
+				padding-block-start: 0.15em;
+				padding-inline-end: 0.5em;
+				
+				@media screen and (min-width: 35em) {
+					border-left: 1px solid var(--accentColor);
+					padding-inline-start: 0.5em;
+				}
+
+				label {
+					font-size: 1.1em;
+				}
+			}
+
+			#base64 {
+				accent-color: var(--accentColor);
+				transform: scale(1.4);
+			}
+
+			.input:has(#data) {
+				grid-area: data;
+				border-top: 1px solid var(--accentColor);
+
+				@media screen and (min-width: 35em) {
+					border-top: 0;
+					border-left: 1px solid var(--accentColor);
+				}
+			}
+
+			#data {
+				outline: 0;
+				border-radius: 0.5em;
+				border: 0;
+				height: 30px;
+				width: 100%;
+				box-sizing: border-box;
+				font-size: 1.1em;
+				padding: 0.85em 0.5em;
+
+				&::placeholder {
+					color: #000000;
+				}
 			}
 
 			.outputContainer {
@@ -56,15 +150,25 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 					max-width: 100%;
 				}
 			}
+
+			.visuallyHidden {
+				clip: rect(0 0 0 0);
+				clip-path: inset(50%);
+				height: 1px;
+				overflow: hidden;
+				position: absolute;
+				white-space: nowrap;
+				width: 1px;
+			}
 		</style>
 	</head>
 	<body>
 		<h1 class="header">Data URL Visualizer</h1>
 		<div class="inputContainer">
 			<div class="input">
-				<label for="dataType">Data Type:</label>
+				<label for="dataType" class="visuallyHidden">Data Type</label>
 				<select name="dataType" id="dataType">
-					<option value="">Select One</option>
+					<option value="">Data Type</option>
 					<optgroup label="Text">
 						<option value="text/plain">Text</option>
 					</optgroup>
@@ -84,13 +188,13 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			</div>
 			
 			<div class="input">
-				<label for="base64">Base64?</label>
 				<input type="checkbox" name="base64" id="base64" checked="checked">
+				<label for="base64">Base64?</label>
 			</div>
 
 			<div class="input">
-				<label for="data">Data:</label>
-				<input type="text" name="data" id="data" autofocus>
+				<label for="data" class="visuallyHidden">Data</label>
+				<input type="text" name="data" id="data" placeholder="Data" autofocus>
 			</div>
 		</div>
 		<div class="outputContainer">
