@@ -221,7 +221,7 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			}
 
 			function downloadOutput(url, mimeType) {
-				const link = this.dom.createElement("a")
+				const link = document.createElement("a")
 				const fileExtension = mimeType.split("/")[1]
 				link.download = `download.${fileExtension}`
 				link.href = url
