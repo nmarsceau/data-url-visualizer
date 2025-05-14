@@ -220,6 +220,14 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 				element.hidden = false
 			}
 
+			function downloadOutput(url, mimeType) {
+				const link = this.dom.createElement("a")
+				const fileExtension = mimeType.split("/")[1]
+				link.download = `download.${fileExtension}`
+				link.href = url
+				link.click()
+			}
+
 			function checkAndParseDataURL() {
 				if (dataInput.value.startsWith("data:")) {
 					const matches = dataInput.value.match(/data:(.*),(.*)/)
@@ -256,7 +264,6 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 					case "image/jpeg":
 					case "image/png":
 					case "image/gif":
-					case "image/tiff":
 					case "image/webp":
 					case "image/svg+xml":
 						displayOutput(imgOutput, dataURL)									
@@ -265,6 +272,9 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 					case "text/html":
 					case "application/pdf":
 						displayOutput(iframeOutput, dataURL)
+						break;
+					case "image/tiff":
+						downloadOutput(dataURL, dataType)
 						break;
 					default:
 						console.error(`Unsupported data type: '${dataType}'`)
