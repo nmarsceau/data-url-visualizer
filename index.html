@@ -188,7 +188,6 @@
 		<div class="outputContainer">
 			<iframe name="iframeOutput" id="iframeOutput" hidden></iframe>
 			<img name="imgOutput" id="imgOutput" src="" alt="" hidden>
-			<a href="" id="downloadLink" hidden>Download File</a>
 		</div>
 		<script>
 			const inputContainer = document.querySelector(".inputContainer")
@@ -198,7 +197,6 @@
 
 			const iframeOutput = document.getElementById("iframeOutput")
 			const imgOutput = document.getElementById("imgOutput")
-			const downloadLink = document.getElementById("downloadLink")
 
 			function initializeOptions() {
 				dataTypeInput.value = localStorage.getItem("dataType") ?? ""
@@ -213,13 +211,6 @@
 			function hideAllOutputs() {
 				iframeOutput.hidden = true
 				imgOutput.hidden = true
-				downloadLink.hidden = true
-				
-				// If we're hiding the download link, revoke the object URL to save memory.
-				if (downloadLink.href) {
-					URL.revokeObjectURL(downloadLink.href)
-					downloadLink.href = ""
-				}
 			}
 
 			function displayOutput(element, url) {
@@ -253,11 +244,14 @@
 				const blob = b64toBlob(data, dataType) // Convert to blob
 				const objectURL = URL.createObjectURL(blob) // Generate object URL
 
-				// Setup download link
+				// Download
+				const link = document.createElement("a")
 				const fileExtension = dataType.split("/")[1]
-				downloadLink.download = `download.${fileExtension}`
-				downloadLink.href = objectURL
-				downloadLink.hidden = false
+				link.download = `download.${fileExtension}`
+				link.href = objectURL
+				link.click()
+
+				URL.revokeObjectURL(objectURL) // Clean up object URL
 			}
 
 			function checkAndParseDataURL() {
@@ -320,7 +314,7 @@
 						displayOutput(iframeOutput, dataURL)
 						break;
 					case "image/tiff":
-						console.log("Displaying a link to download as a file.")
+						console.log("Downloading as a file.")
 						downloadOutput(dataType, base64, data)
 						break;
 					default:
