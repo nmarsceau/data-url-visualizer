@@ -201,6 +201,7 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 		<div class="outputContainer">
 			<iframe name="iframeOutput" id="iframeOutput" hidden></iframe>
 			<img name="imgOutput" id="imgOutput" src="" alt="" hidden>
+			<a href="" id="downloadLink" hidden>Download File</a>
 		</div>
 		<script>
 			const inputContainer = document.querySelector(".inputContainer")
@@ -210,6 +211,7 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 
 			const iframeOutput = document.getElementById("iframeOutput")
 			const imgOutput = document.getElementById("imgOutput")
+			const downloadLink = document.getElementById("downloadLink")
 
 			function initializeOptions() {
 				dataTypeInput.value = localStorage.getItem("dataType") ?? ""
@@ -224,6 +226,13 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			function hideAllOutputs() {
 				iframeOutput.hidden = true
 				imgOutput.hidden = true
+				downloadLink.hidden = true
+				
+				// If we're hiding the download link, revoke the object URL to save memory.
+				if (downloadLink.href) {
+					URL.revokeObjectURL(downloadLink.href)
+					downloadLink.href = ""
+				}
 			}
 
 			function displayOutput(element, url) {
@@ -257,14 +266,11 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 				const blob = b64toBlob(data, dataType) // Convert to blob
 				const objectURL = URL.createObjectURL(blob) // Generate object URL
 
-				// Download
-				const link = document.createElement("a")
+				// Setup download link
 				const fileExtension = dataType.split("/")[1]
-				link.download = `download.${fileExtension}`
-				link.href = objectURL
-				link.click()
-
-				URL.revokeObjectURL(objectURL) // Clean up object URL
+				downloadLink.download = `download.${fileExtension}`
+				downloadLink.href = objectURL
+				downloadLink.hidden = false
 			}
 
 			function checkAndParseDataURL() {
@@ -327,7 +333,7 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 						displayOutput(iframeOutput, dataURL)
 						break;
 					case "image/tiff":
-						console.log("Downloading as a file.")
+						console.log("Displaying a link to download as a file.")
 						downloadOutput(dataType, base64, data)
 						break;
 					default:
