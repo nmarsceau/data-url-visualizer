@@ -218,40 +218,21 @@
 				element.hidden = false
 			}
 
-			// https://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
-			function b64toBlob (b64Data, contentType = "", sliceSize = 512) {
-				const byteCharacters = atob(b64Data)
-				const byteArrays = []
+			function downloadOutput(url, mimeType) {
+				fetch(url)
+					.then(res => res.blob()) // Convert to blob
+					.then(blob => {
+						const objectURL = URL.createObjectURL(blob) // Generate object URL
 
-				for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-					const slice = byteCharacters.slice(offset, offset + sliceSize)
+						// Download
+						const link = document.createElement("a")
+						const fileExtension = mimeType.split("/")[1]
+						link.download = `download.${fileExtension}`
+						link.href = objectURL
+						link.click()
 
-					const byteNumbers = new Array(slice.length)
-					for (let i = 0; i < slice.length; i++) {
-						byteNumbers[i] = slice.charCodeAt(i)
-					}
-
-					const byteArray = new Uint8Array(byteNumbers)
-					byteArrays.push(byteArray)
-				}
-
-				const blob = new Blob(byteArrays, {type: contentType})
-				return blob
-			}
-
-			function downloadOutput(dataType, base64, data) {
-				if (!base64) data = btoa(data) // Convert to base64
-				const blob = b64toBlob(data, dataType) // Convert to blob
-				const objectURL = URL.createObjectURL(blob) // Generate object URL
-
-				// Download
-				const link = document.createElement("a")
-				const fileExtension = dataType.split("/")[1]
-				link.download = `download.${fileExtension}`
-				link.href = objectURL
-				link.click()
-
-				URL.revokeObjectURL(objectURL) // Clean up object URL
+						URL.revokeObjectURL(objectURL) // Clean up object URL
+					})
 			}
 
 			function checkAndParseDataURL() {
@@ -315,7 +296,7 @@
 						break;
 					case "image/tiff":
 						console.log("Downloading as a file.")
-						downloadOutput(dataType, base64, data)
+						downloadOutput(dataURL, dataType)
 						break;
 					default:
 						console.error(`Unsupported data type: '${dataType}'`)
