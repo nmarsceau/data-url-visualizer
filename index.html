@@ -275,12 +275,22 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			function updateOutput() {
 				saveOptions()
 
+				console.group("Updating Output")
+
 				const dataType = dataTypeInput.value
 				const base64 = base64Input.checked
 				const data = dataInput.value
 
+				console.log("Data Type:", dataType)
+				console.log("Base64:", base64)
+				if (data.length > 40) {
+					console.log("Data:", data.substring(0, 15) + "..." + data.substring(data.length - 15))
+				} else {
+					console.log("Data:", data)
+				}
+
 				const dataURL = `data:${dataType}${base64 ? ";base64" : ""},${data}`
-				
+
 				hideAllOutputs()
 				switch (dataType) {
 					case "image/jpeg":
@@ -288,20 +298,25 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 					case "image/gif":
 					case "image/webp":
 					case "image/svg+xml":
+						console.log("Displaying as an image.")
 						displayOutput(imgOutput, dataURL)									
 						break;
 					case "text/plain":
 					case "text/html":
 					case "application/pdf":
+						console.log("Displaying as a document in an iframe.")
 						displayOutput(iframeOutput, dataURL)
 						break;
 					case "image/tiff":
+						console.log("Downloading as a file.")
 						downloadOutput(dataURL, dataType)
 						break;
 					default:
 						console.error(`Unsupported data type: '${dataType}'`)
 						break;
 				}
+
+				console.groupEnd()
 			}
 
 			initializeOptions()
