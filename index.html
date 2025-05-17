@@ -288,6 +288,7 @@
 						break;
 					case "image/tiff":
 						console.log("Downloading as a file.")
+						console.warn(`Note: downloading ${dataType.split("/")[1].toUpperCase()} files in this manner may not work in all browsers. I've had issues in Opera and Vivaldi, but this works fine in Firefox.`)
 						downloadOutput(dataURL, dataType)
 						break;
 					default:
