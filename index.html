@@ -219,6 +219,7 @@
 			}
 
 			function downloadOutput(url, mimeType) {
+				if (url.substring(url.length - 1) === ",") return
 				const link = document.createElement("a")
 				const fileExtension = mimeType.split("/")[1]
 				link.download = `download.${fileExtension}`
