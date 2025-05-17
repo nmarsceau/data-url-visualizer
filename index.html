@@ -222,11 +222,20 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			}
 
 			function downloadOutput(url, mimeType) {
-				const link = document.createElement("a")
-				const fileExtension = mimeType.split("/")[1]
-				link.download = `download.${fileExtension}`
-				link.href = url
-				link.click()
+				fetch(url)
+					.then(res => res.blob()) // Convert to blob
+					.then(blob => {
+						const objectURL = URL.createObjectURL(blob) // Generate object URL
+
+						// Download
+						const link = document.createElement("a")
+						const fileExtension = mimeType.split("/")[1]
+						link.download = `download.${fileExtension}`
+						link.href = objectURL
+						link.click()
+
+						URL.revokeObjectURL(objectURL) // Clean up object URL
+					})
 			}
 
 			function checkAndParseDataURL() {
