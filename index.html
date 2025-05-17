@@ -211,6 +211,16 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			const iframeOutput = document.getElementById("iframeOutput")
 			const imgOutput = document.getElementById("imgOutput")
 
+			function initializeOptions() {
+				dataTypeInput.value = localStorage.getItem("dataType") ?? ""
+				base64Input.checked = localStorage.getItem("base64") === "true"
+			}
+
+			function saveOptions() {
+				localStorage.setItem("dataType", dataTypeInput.value)
+				localStorage.setItem("base64", base64Input.checked ? "true" : "false")
+			}
+
 			function hideAllOutputs() {
 				iframeOutput.hidden = true
 				imgOutput.hidden = true
@@ -263,6 +273,8 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 			}
 
 			function updateOutput() {
+				saveOptions()
+
 				const dataType = dataTypeInput.value
 				const base64 = base64Input.checked
 				const data = dataInput.value
@@ -291,6 +303,8 @@ GIF: data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSKudfOulrSOp3WOyDZu6QdvCchPGol
 						break;
 				}
 			}
+
+			initializeOptions()
 
 			let timeout
 			inputContainer.addEventListener("input", (event) => {
