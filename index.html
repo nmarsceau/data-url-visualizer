@@ -258,7 +258,11 @@
 
 				const dataType = dataTypeInput.value
 				const base64 = base64Input.checked
-				const data = dataInput.value
+				let data = dataInput.value
+
+				if (base64) {
+					data = data.replace(/\s/g, "") // Remove whitespace
+				}
 
 				console.log("Data Type:", dataType)
 				console.log("Base64:", base64)
