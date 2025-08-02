@@ -4,12 +4,12 @@
 	"description": "This is an online tool for looking at the contents of data URLs.",
 	"main": "index.html",
 	"scripts": {
-	  "dev": "ws",
-	  "test": "echo \"Error: no test specified\" && exit 1"
+		"dev": "ws",
+		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Nicolas Marsceau",
 	"license": "Apache-2.0",
-  	"devDependencies": {
-    	"local-web-server": "^5.4.0"
-  	}
+	"devDependencies": {
+		"local-web-server": "^5.4.0"
+	}
 }
