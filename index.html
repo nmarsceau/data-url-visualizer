@@ -337,6 +337,11 @@
 					updateOutput()
 				}, 300)
 			})
+
+			window.addEventListener("focus", () => {
+				dataInput.focus()
+				dataInput.select()
+			})
 		</script>
 		<script src="./tiff.min.js"></script>
 	</body>
